@@ -1,0 +1,39 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: postgresql-backup
+spec:
+  schedule: "0 */12 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: pgsql-backup
+            image: harbor.dsrd.libraries.psu.edu/library/postgresql-backup:latest
+            env:
+            - name: PGHOST
+              value: "postgresql"
+            # - name: PGPORT
+            #   value: "PGPORT_PLACEHOLDER"
+            - name: PGDATABASE
+              value: "databse"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+            volumeMounts:
+            - mountPath: "/backups"
+              name: backup-volume
+          volumes:
+            - name: backup-volume
+              persistentVolumeClaim:
+                claimName: postgres-backup
+
