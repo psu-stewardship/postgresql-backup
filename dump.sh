@@ -3,7 +3,7 @@ set -e
 
 start_time=$(date +%s)
 BACKUP_DIR=${BACKUP_DIR:-"/backups"}
-DUMP_FILE_NAME="backupOn $(date +%Y-%m-%d-%H-%M:%S).sql"
+DUMP_FILE_NAME="backup-$(date +%Y-%m-%d-%H-%M-%S).sql"
 
 cd $BACKUP_DIR
 
